@@ -1,0 +1,30 @@
+# mise (https://mise.jdx.dev) タスクランナー設定
+#
+# 使い方:
+#   mise install          このプロジェクトのPython/uvを用意する
+#   mise run install      依存パッケージをインストールする(uv sync)
+#   mise run secrets:init secrets.toml のひな形を .streamlit/ にコピーする(初回のみ)
+#   mise run devices:list デバイス一覧(deviceId)を取得する
+#   mise run dev           アプリを起動する
+
+[tools]
+python = "3.12"
+uv = "latest"
+
+[tasks.install]
+description = "依存パッケージをインストールする"
+run = "uv sync"
+
+[tasks."secrets:init"]
+description = "secrets.toml のひな形を .streamlit/ にコピーする(既にあれば上書きしない)"
+run = "mkdir -p .streamlit && cp -n secrets.toml.example .streamlit/secrets.toml"
+
+[tasks."devices:list"]
+description = "SwitchBotのデバイス一覧(deviceId)を取得する(要 SWITCHBOT_TOKEN / SWITCHBOT_SECRET 環境変数)"
+depends = ["install"]
+run = "uv run python list_devices.py"
+
+[tasks.dev]
+description = "Streamlitアプリを起動する"
+depends = ["install"]
+run = "uv run streamlit run app.py"
