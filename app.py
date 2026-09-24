@@ -162,6 +162,12 @@ def check_password() -> None:
             st.error("合言葉が違うみたい…もう一度確認してね")
 
 
+# URLに ?key=合言葉 を付けてアクセスすると自動でログインできる。
+# 毎回の入力を省きたい場合、このURLをブックマーク/ホーム画面に追加しておく。
+# (URLを知っている人は合言葉なしで操作できてしまうので、信頼できる自分の端末だけで使うこと)
+if not st.session_state.authed and st.query_params.get("key") == settings.app_password:
+    st.session_state.authed = True
+
 if not st.session_state.authed:
     check_password()
     st.stop()
